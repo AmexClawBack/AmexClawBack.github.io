@@ -4,7 +4,7 @@ title: Mobile Welding for Facility & Property Managers | Hampton Roads
 date: 2025-09-24T13:25:00
 description: 'On-site, AWS D1.1 mobile welding for facilities & property managers: OSHA-compliant handrails, stairs, docks, gates. Fast response in Hampton Roads.'
 categories:
-  - -Facility Maintenance Welding
+  - Facility Maintenance Welding
   - Property Management Solutions
   - Commercial Welding & Fabrication
   - OSHA & Safety Compliance
