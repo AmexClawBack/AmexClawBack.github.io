@@ -1,15 +1,12 @@
 name: "Build and Deploy"
+
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [ main, master ]
     paths-ignore:
       - .gitignore
       - README.md
       - LICENSE
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -17,7 +14,6 @@ permissions:
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -31,9 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # submodules: true
-          # If using the 'assets' git submodule from Chirpy Starter, uncomment above
-          # (See: https://github.com/cotes2020/chirpy-starter/tree/main/assets)
+          persist-credentials: false   # IMPORTANT for pushing to external repo with PAT
 
       - name: Setup Pages
         id: pages
@@ -42,14 +36,15 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3
+          ruby-version: "3.3"
           bundler-cache: true
 
-      - name: Build site
-        run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
+      # ====== 1) Build for GitHub Pages (amexclawback.github.io) ======
+      - name: Build site (GitHub Pages)
         env:
           JEKYLL_ENV: "production"
-          
+        run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
+
       - name: Test site
         continue-on-error: true
         run: |
@@ -57,11 +52,51 @@ jobs:
             --disable-external \
             --ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
 
-
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: "_site${{ steps.pages.outputs.base_path }}"
+
+      # ====== 2) Build for KingsMobileWelding /blog ======
+      - name: Build Jekyll for /blog (Kings site)
+        run: |
+          echo 'url: "https://www.kingsmobilewelding.com"' > _config.kmw.yml
+          echo 'baseurl: "/blog"' >> _config.kmw.yml
+          echo 'timezone: "America/New_York"' >> _config.kmw.yml
+          # Add --future if you want posts dated later today to appear immediately:
+          # bundle exec jekyll build --trace --future --config _config.yml,_config.kmw.yml -d ./_site_blog
+          bundle exec jekyll build --trace --config _config.yml,_config.kmw.yml -d ./_site_blog
+
+      - name: Prepare feed.xml for site assets
+        run: |
+          mkdir -p push-assets
+          cp ./_site_blog/feed.xml push-assets/feed.xml
+
+      # ====== 3) Push build into KingsMobileWelding/blog ======
+      - name: Push built blog to KingsMobileWelding/blog
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets['KMW Sync Token'] }}
+          external_repository: AmexClawBack/KingsMobileWelding
+          publish_branch: main
+          publish_dir: ./_site_blog
+          destination_dir: blog
+          keep_files: true
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+
+      # ====== 4) Push fresh feed.xml into KingsMobileWelding/assets ======
+      - name: Push feed.xml to KingsMobileWelding/assets
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets['KMW Sync Token'] }}
+          external_repository: AmexClawBack/KingsMobileWelding
+          publish_branch: main
+          publish_dir: ./push-assets
+          destination_dir: assets
+          keep_files: true
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
 
   deploy:
     environment:
@@ -73,3 +108,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
