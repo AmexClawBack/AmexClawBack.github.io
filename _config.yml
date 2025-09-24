@@ -1,22 +1,23 @@
 title: "Kings Mobile Welding Blog"
 description: "Updates, project highlights, and welding know-how from the field."
-url: "https://amexclawback.github.io"   # user/organization pages: keep baseurl empty
-baseurl: ""                              # overridden to /blog during Kings build
+url: "https://amexclawback.github.io"    # For user/org pages keep baseurl empty
+baseurl: ""                               # Your Kings build overrides to /blog
 timezone: "America/New_York"
 
 markdown: kramdown
-theme: jekyll-theme-chirpy
+theme: jekyll-theme-chirpy                 # If you later remove Chirpy, delete this line
 
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
 
+# Ensure posts build to /posts/<slug>/
 collections:
   posts:
     output: true
     permalink: /posts/:title/
 
-# Force posts to use our layout (your workflow also sets this during /blog build)
+# Force all posts to use our post layout (your custom _layouts/post.html)
 defaults:
   - scope:
       path: ""
@@ -24,11 +25,12 @@ defaults:
     values:
       layout: "post"
 
-# Keep Jekyll from picking up junk
+# Keep the generator from picking up junk
 exclude:
   - node_modules
+  - vendor
   - vendor/bundle
   - Gemfile.lock
   - package-lock.json
-'@ | Set-Content -Encoding UTF8 -NoNewline .\_config.yml
-
+  - README.md
+  - LICENSE
