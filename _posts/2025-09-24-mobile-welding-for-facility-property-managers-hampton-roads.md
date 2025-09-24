@@ -15,6 +15,9 @@ tags:
   - Loading dock safety repairs
   - Dumpster gate welding
   - Hampton Roads mobile welder
+image:
+  path: /assets/uploads/mobile-welding-handrail-repair-hampton-roads.jpg
+  alt: mobile welder Hampton Roads, facility handrail repair
 published: true
 ---
 # How Kings Mobile Welding Keeps Facilities Running: Fast, OSHA-Compliant Metal Repairs & Modifications for Property Managers
