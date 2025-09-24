@@ -1,0 +1,27 @@
+---
+layout: kmw_base
+---
+
+<section class="blog-hero">
+  <div class="container">
+    <p class="lead" style="margin:0 0 .75rem;">
+      <a href="{{ site.baseurl }}/" style="color:#E6ECF5;text-decoration:none;">← Back to Blog</a>
+    </p>
+    <h1 class="post-title">{{ page.title }}</h1>
+    {% if page.date %}
+      <p class="post-meta">{{ page.date | date: "%B %d, %Y" }}</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="blog-wrap">
+  <div class="container">
+    {% if page.image %}
+      <figure class="post-cover"><img src="{{ page.image | relative_url }}" alt=""></figure>
+    {% endif %}
+
+    <article class="kmw-post-body">
+      {{ content }}
+    </article>
+  </div>
+</section>
