@@ -73,13 +73,26 @@ jobs:
           mkdir -p push-assets
           cp ./_site_blog/feed.xml push-assets/feed.xml
 
-      # ===== 3) Push to AmexClawBack/KingsMobileWelding via normal git =====
+      # ===== 3) Token sanity check (debug; safe to keep) =====
+      - name: Check PAT scopes (debug)
+        env:
+          PAT: ${{ secrets.KMW_SYNC_TOKEN }}
+        run: |
+          set -e
+          echo "Fetching token scopes…"
+          curl -sI -H "Authorization: token ${PAT}" https://api.github.com/user \
+            | tr -d '\r' | grep -i '^x-oauth-scopes' || true
+          echo "Checking repo permissions…"
+          curl -s -H "Authorization: token ${PAT}" https://api.github.com/repos/AmexClawBack/KingsMobileWelding \
+            | tr -d '\r' | grep -E '"full_name"|\"private\"|\"permissions\"' || true
+
+      # ===== 4) Push to AmexClawBack/KingsMobileWelding via normal git =====
       - name: Checkout KingsMobileWelding (target repo)
         uses: actions/checkout@v4
         with:
           repository: AmexClawBack/KingsMobileWelding
           path: kings
-          token: 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 # your secret name with a space
+          token: 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
           fetch-depth: 0
           persist-credentials: false
 
