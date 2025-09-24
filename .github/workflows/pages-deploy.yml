@@ -64,7 +64,7 @@ jobs:
           echo 'url: "https://www.kingsmobilewelding.com"' > _config.kmw.yml
           echo 'baseurl: "/blog"' >> _config.kmw.yml
           echo 'timezone: "America/New_York"' >> _config.kmw.yml
-          # If you want immediate publish for future-dated posts, uncomment --future:
+          # Uncomment --future if you want immediate publish even if UTC thinks it's future:
           # bundle exec jekyll build --trace --future --config _config.yml,_config.kmw.yml -d ./_site_blog
           bundle exec jekyll build --trace --config _config.yml,_config.kmw.yml -d ./_site_blog
 
@@ -73,26 +73,13 @@ jobs:
           mkdir -p push-assets
           cp ./_site_blog/feed.xml push-assets/feed.xml
 
-      # ===== 3) Token sanity check (debug; safe to keep) =====
-      - name: Check PAT scopes (debug)
-        env:
-          PAT: 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
-        run: |
-          set -e
-          echo "Fetching token scopes…"
-          curl -sI -H "Authorization: token ${PAT}" https://api.github.com/user \
-            | tr -d '\r' | grep -i '^x-oauth-scopes' || true
-          echo "Checking repo permissions…"
-          curl -s -H "Authorization: token ${PAT}" https://api.github.com/repos/AmexClawBack/KingsMobileWelding \
-            | tr -d '\r' | grep -E '"full_name"|\"private\"|\"permissions\"' || true
-
-      # ===== 4) Push to AmexClawBack/KingsMobileWelding via normal git =====
+      # ===== 3) Push to AmexClawBack/KingsMobileWelding via normal git (uses secret) =====
       - name: Checkout KingsMobileWelding (target repo)
         uses: actions/checkout@v4
         with:
           repository: AmexClawBack/KingsMobileWelding
           path: kings
-          token: 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
+          token: ${{ secrets.KMW_SYNC_TOKEN }}   # <--- use your secret here
           fetch-depth: 0
           persist-credentials: false
 
