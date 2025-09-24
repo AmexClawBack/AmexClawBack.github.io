@@ -1,4 +1,4 @@
-name: "Build and Deploy"
+ name: "Build and Deploy"
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false  # important for later external push
+          persist-credentials: false  # keep this false for the blog repo
 
       - name: Setup Pages
         id: pages
@@ -66,32 +66,26 @@ jobs:
           mkdir -p push-assets
           cp ./_site_blog/feed.xml push-assets/feed.xml
 
-      # ===== 3) (Optional) Token scope check — helpful while debugging =====
-      - name: Check PAT scopes (debug)
-        env:
-          PAT: ${{ secrets.KMW_SYNC_TOKEN }}
-        run: |
-          echo "Token scopes header:"
-          curl -sI -H "Authorization: token ${PAT}" https://api.github.com/user \
-            | tr -d '\r' | grep -i '^x-oauth-scopes' || true
-          echo "Repo permissions snapshot:"
-          curl -s -H "Authorization: token ${PAT}" https://api.github.com/repos/AmexClawBack/KingsMobileWelding \
-            | tr -d '\r' | grep -E '"full_name"|\"private\"|\"permissions\"' || true
-
-      # ===== 4) Push to AmexClawBack/KingsMobileWelding via normal git =====
+      # ===== 3) Push to AmexClawBack/KingsMobileWelding via normal git =====
       - name: Checkout KingsMobileWelding (target repo)
         uses: actions/checkout@v4
         with:
           repository: AmexClawBack/KingsMobileWelding
           path: kings
-          token: ${{ secrets.KMW_SYNC_TOKEN }}   # <-- uses your new secret
+          token: ${{ secrets.KMW_SYNC_TOKEN }}   # PAT stored as repo secret
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true             # <— allow credentials to persist for push
 
       - name: Sync blog build into kings/blog and push
+        env:
+          PAT: ${{ secrets.KMW_SYNC_TOKEN }}
         run: |
           rsync -a --delete ./_site_blog/ ./kings/blog/
+
           cd kings
+          # ensure remote uses auth URL (belt-and-suspenders in case helper isn't set)
+          git remote set-url origin https://x-access-token:${PAT}@github.com/AmexClawBack/KingsMobileWelding.git
+
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add blog
@@ -103,9 +97,14 @@ jobs:
           fi
 
       - name: Sync feed.xml into kings/assets and push
+        env:
+          PAT: ${{ secrets.KMW_SYNC_TOKEN }}
         run: |
           rsync -a ./push-assets/ ./kings/assets/
+
           cd kings
+          git remote set-url origin https://x-access-token:${PAT}@github.com/AmexClawBack/KingsMobileWelding.git
+
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add assets/feed.xml
