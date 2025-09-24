@@ -24,14 +24,34 @@ layout: kmw_base
   </div>
 </section>
 
+{% comment %}
+Normalize `page.image` to `cover_path` and `cover_alt`
+Supports:
+- image: /path.jpg
+- image: { path: /path.jpg, alt: "...", lqip: "..." }
+{% endcomment %}
+{% assign cover_path = nil %}
+{% assign cover_alt = nil %}
+{% if page.image %}
+  {% if page.image.path %}
+    {% assign cover_path = page.image.path %}
+    {% assign cover_alt  = page.image.alt | default: page.title %}
+  {% else %}
+    {% assign cover_path = page.image %}
+    {% assign cover_alt  = page.title %}
+  {% endif %}
+{% endif %}
+
 <section class="blog-wrap" itemscope itemtype="https://schema.org/BlogPosting">
   <meta itemprop="mainEntityOfPage" content="{{ page.url | absolute_url }}">
-  {% if page.image %}
-    <meta itemprop="image" content="{{ page.image | absolute_url }}">
+  {% if cover_path %}
+    <meta itemprop="image" content="{{ cover_path | absolute_url }}">
   {% endif %}
   <div class="container">
-    {% if page.image %}
-      <figure class="post-cover"><img src="{{ page.image | relative_url }}" alt=""></figure>
+    {% if cover_path %}
+      <figure class="post-cover">
+        <img src="{{ cover_path | relative_url }}" alt="{{ cover_alt | escape }}">
+      </figure>
     {% endif %}
 
     <article class="kmw-post-body" itemprop="articleBody">
@@ -47,7 +67,7 @@ layout: kmw_base
   "@type":"BlogPosting",
   "headline": {{ page.title | jsonify }},
   "datePublished":"{{ page.date | date_to_xmlschema }}",
-  {% if page.image %}"image":[ "{{ page.image | absolute_url }}" ],{% endif %}
+  {% if cover_path %}"image":[ "{{ cover_path | absolute_url }}" ],{% endif %}
   "mainEntityOfPage":"{{ page.url | absolute_url }}",
   "author": { "@type":"Organization", "name":"Kings Mobile Welding" },
   "publisher": {
