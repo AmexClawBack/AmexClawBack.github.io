@@ -225,9 +225,5 @@ jekyll-archives:
     tag: /tags/:name/
     category: /categories/:name/
 
-     backend:
-   name: github # or gitlab
-   repo: AmexClawBack/AmexClawBack.github.io
-   branch: main
-+  base_url: https://sveltia-cms-auth.dillonk2012.workers.dev
+
 
