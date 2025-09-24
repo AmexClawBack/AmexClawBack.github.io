@@ -22,12 +22,6 @@ seo_description: "Kings Mobile Welding blog — updates, project highlights, wel
 
     <div class="blog-grid" id="postsGrid">
       {% for p in site.posts %}
-        {%- comment -%}
-        Normalize image:
-        - Supports image: /path.jpg
-        - Supports image: { path: /path.jpg, alt: "..." }
-        - Falls back to cover/thumbnail if present
-        {%- endcomment -%}
         {% assign thumb_path = nil %}
         {% assign thumb_alt  = p.title %}
 
@@ -46,9 +40,13 @@ seo_description: "Kings Mobile Welding blog — updates, project highlights, wel
 
         <article class="post" itemscope itemtype="https://schema.org/BlogPosting" itemprop="blogPost" data-title="{{ p.title | downcase }}">
           {% if thumb_path %}
-            <img src="{{ thumb_path | relative_url }}" alt="{{ thumb_alt | escape }}" loading="lazy" itemprop="image">
+            <a href="{{ p.url | relative_url }}">
+              <img src="{{ thumb_path | relative_url }}" alt="{{ thumb_alt | escape }}" loading="lazy" itemprop="image">
+            </a>
           {% else %}
-            <img src="/assets/img/og-image.jpg" alt="{{ p.title | escape }}" loading="lazy" itemprop="image">
+            <a href="{{ p.url | relative_url }}">
+              <img src="/assets/img/og-image.jpg" alt="{{ p.title | escape }}" loading="lazy" itemprop="image">
+            </a>
           {% endif %}
 
           <div class="body">
@@ -100,4 +98,3 @@ seo_description: "Kings Mobile Welding blog — updates, project highlights, wel
     });
   })();
 </script>
-
