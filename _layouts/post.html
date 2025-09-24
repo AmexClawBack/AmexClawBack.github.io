@@ -4,24 +4,57 @@ layout: kmw_base
 
 <section class="blog-hero">
   <div class="container">
-    <p class="lead" style="margin:0 0 .75rem;">
-      <a href="{{ site.baseurl }}/" style="color:#E6ECF5;text-decoration:none;">← Back to Blog</a>
-    </p>
-    <h1 class="post-title">{{ page.title }}</h1>
+    <nav class="kmw-breadcrumbs" aria-label="Breadcrumb">
+      <a href="{{ site.baseurl }}/">Blog</a> › <span aria-current="page">{{ page.title }}</span>
+    </nav>
+    <h1 class="post-title" itemprop="headline">{{ page.title }}</h1>
     {% if page.date %}
-      <p class="post-meta">{{ page.date | date: "%B %d, %Y" }}</p>
+      <p class="post-meta">
+        <time itemprop="datePublished" datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+      </p>
+    {% endif %}
+
+    {% if page.tags %}
+      <div class="kmw-tags" aria-label="Tags">
+        {% for t in page.tags %}
+          <span class="kmw-tag" itemprop="keywords">{{ t }}</span>
+        {% endfor %}
+      </div>
     {% endif %}
   </div>
 </section>
 
-<section class="blog-wrap">
+<section class="blog-wrap" itemscope itemtype="https://schema.org/BlogPosting">
+  <meta itemprop="mainEntityOfPage" content="{{ page.url | absolute_url }}">
+  {% if page.image %}
+    <meta itemprop="image" content="{{ page.image | absolute_url }}">
+  {% endif %}
   <div class="container">
     {% if page.image %}
       <figure class="post-cover"><img src="{{ page.image | relative_url }}" alt=""></figure>
     {% endif %}
 
-    <article class="kmw-post-body">
+    <article class="kmw-post-body" itemprop="articleBody">
       {{ content }}
     </article>
   </div>
 </section>
+
+<!-- JSON-LD for the Article -->
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BlogPosting",
+  "headline": {{ page.title | jsonify }},
+  "datePublished":"{{ page.date | date_to_xmlschema }}",
+  {% if page.image %}"image":[ "{{ page.image | absolute_url }}" ],{% endif %}
+  "mainEntityOfPage":"{{ page.url | absolute_url }}",
+  "author": { "@type":"Organization", "name":"Kings Mobile Welding" },
+  "publisher": {
+    "@type":"Organization",
+    "name":"Kings Mobile Welding",
+    "logo": { "@type":"ImageObject", "url":"{{ '/assets/img/logo-500.png' | absolute_url }}" }
+  },
+  "description": {{ page.excerpt | default: page.seo_description | strip_html | truncate: 200 | jsonify }}
+}
+</script>
