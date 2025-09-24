@@ -10,11 +10,11 @@ categories:
   - OSHA & Safety Compliance
   - Emergency Mobile Welding
 tags:
-  - handrail repair
-  - stair stringer welding
-  - loading dock safety repairs
-  - dumpster gate welding
-  - -Hampton Roads mobile welder
+  - Handrail repair
+  - Stair stringer welding
+  - Loading dock safety repairs
+  - Dumpster gate welding
+  - Hampton Roads mobile welder
 published: true
 ---
 # How Kings Mobile Welding Keeps Facilities Running: Fast, OSHA-Compliant Metal Repairs & Modifications for Property Managers
