@@ -13,7 +13,7 @@
   {% assign canon = site.url | append: site.baseurl | append: page.url | replace: '//', '/' | replace: 'https:/', 'https://' %}
   <link rel="canonical" href="{{ canon }}">
 
-  {% assign desc = page.seo_description | default: page.excerpt | default: site.description %}
+  {% assign desc = page.seo_description | default: page.description | default: page.summary | default: page.excerpt | default: site.description %}
   <meta name="description" content="{{ desc | strip_html | normalize_whitespace | truncate: 160 }}">
   {% if page.tags %}
   <meta name="keywords" content="{{ page.tags | uniq | join: ', ' }}">
