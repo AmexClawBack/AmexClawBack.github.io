@@ -2,11 +2,11 @@
   name: github
   repo: AmexClawBack/AmexClawBack.github.io
   branch: main
-  base_url: https://sveltia-cms-auth.dillonk2012.workers.dev   # Cloudflare Worker URL for GitHub OAuth
+  base_url: https://sveltia-cms-auth.dillonk2012.workers.dev
 
-media_folder: "assets/uploads"     # where uploaded images are saved in the repo
-public_folder: "/assets/uploads"   # how the site references those images
-publish_mode: simple               # Jekyll-friendly; no editorial workflow
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+publish_mode: simple
 
 slug:
   encoding: "ascii"
@@ -16,10 +16,9 @@ slug:
 collections:
   - name: "posts"
     label: "Blog Posts"
-    label_singular: "Post"
     folder: "_posts"
     create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"   # Jekyll expects this filename format
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     extension: "md"
     format: "frontmatter"
     editor:

@@ -230,3 +230,4 @@ jekyll-archives:
    repo: AmexClawBack/AmexClawBack.github.io
    branch: main
 +  base_url: https://sveltia-cms-auth.dillonk2012.workers.dev
+
