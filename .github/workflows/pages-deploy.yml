@@ -76,7 +76,7 @@ jobs:
       - name: Push built blog to KingsMobileWelding/blog
         uses: peaceiris/actions-gh-pages@v3
         with:
-          personal_token: ${{ secrets['KMW Sync Token'] }}
+          personal_token: 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
           external_repository: AmexClawBack/KingsMobileWelding
           publish_branch: main
           publish_dir: ./_site_blog
