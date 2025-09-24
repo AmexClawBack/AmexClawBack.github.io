@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false  # important when we later push to external repo
+          persist-credentials: false  # avoid auth clashes later
 
       - name: Setup Pages
         id: pages
@@ -46,12 +46,13 @@ jobs:
           JEKYLL_ENV: "production"
         run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
 
-      - name: Test site
+      - name: Test site (htmlproofer)
         continue-on-error: true
         run: |
+          # Ignore just the known bad URL 'dffd' so CI doesn't fail
           bundle exec htmlproofer _site \
             --disable-external \
-            --ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
+            --ignore-urls "/^dffd$/"
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
@@ -64,7 +65,7 @@ jobs:
           echo 'url: "https://www.kingsmobilewelding.com"' > _config.kmw.yml
           echo 'baseurl: "/blog"' >> _config.kmw.yml
           echo 'timezone: "America/New_York"' >> _config.kmw.yml
-          # Uncomment --future if you want immediate publish even if UTC thinks it's future:
+          # If you want immediate publish even if UTC thinks the post is in the future, uncomment --future:
           # bundle exec jekyll build --trace --future --config _config.yml,_config.kmw.yml -d ./_site_blog
           bundle exec jekyll build --trace --config _config.yml,_config.kmw.yml -d ./_site_blog
 
@@ -73,20 +74,26 @@ jobs:
           mkdir -p push-assets
           cp ./_site_blog/feed.xml push-assets/feed.xml
 
-      # ===== 3) Push to AmexClawBack/KingsMobileWelding via normal git (uses secret) =====
+      # ===== 3) Push to AmexClawBack/KingsMobileWelding via normal git =====
       - name: Checkout KingsMobileWelding (target repo)
         uses: actions/checkout@v4
         with:
           repository: AmexClawBack/KingsMobileWelding
           path: kings
-          token: ${{ secrets.KMW_SYNC_TOKEN }}   # <--- use your secret here
+          token: ${{ secrets.KMW_SYNC_TOKEN }}   # secret PAT
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true             # allow push to reuse token
 
       - name: Sync blog build into kings/blog and push
+        env:
+          PAT: ${{ secrets.KMW_SYNC_TOKEN }}
         run: |
           rsync -a --delete ./_site_blog/ ./kings/blog/
+
           cd kings
+          # Ensure remote uses auth URL (belt-and-suspenders)
+          git remote set-url origin https://x-access-token:${PAT}@github.com/AmexClawBack/KingsMobileWelding.git
+
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add blog
@@ -98,9 +105,14 @@ jobs:
           fi
 
       - name: Sync feed.xml into kings/assets and push
+        env:
+          PAT: ${{ secrets.KMW_SYNC_TOKEN }}
         run: |
           rsync -a ./push-assets/ ./kings/assets/
+
           cd kings
+          git remote set-url origin https://x-access-token:${PAT}@github.com/AmexClawBack/KingsMobileWelding.git
+
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add assets/feed.xml
