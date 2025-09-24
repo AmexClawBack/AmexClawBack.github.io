@@ -1,0 +1,129 @@
+name: "Build and Deploy"
+
+on:
+  push:
+    branches: [ main, master ]
+    paths-ignore:
+      - .gitignore
+      - README.md
+      - LICENSE
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # --- BLOG REPO CHECKOUT (this repo) ---
+      - name: Checkout (blog repo)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false  # important for later external push
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      # ===== 1) Build for GitHub Pages (amexclawback.github.io) =====
+      - name: Build site (GitHub Pages)
+        env:
+          JEKYLL_ENV: "production"
+        run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "_site${{ steps.pages.outputs.base_path }}"
+
+      # ===== 2) Build for KingsMobileWelding under /blog =====
+      - name: Build Jekyll for /blog (Kings site)
+        run: |
+          echo 'url: "https://www.kingsmobilewelding.com"' > _config.kmw.yml
+          echo 'baseurl: "/blog"' >> _config.kmw.yml
+          echo 'timezone: "America/New_York"' >> _config.kmw.yml
+          # Uncomment --future if you want immediate publish even if UTC thinks it's future:
+          # bundle exec jekyll build --trace --future --config _config.yml,_config.kmw.yml -d ./_site_blog
+          bundle exec jekyll build --trace --config _config.yml,_config.kmw.yml -d ./_site_blog
+
+      - name: Prepare feed.xml for site assets
+        run: |
+          mkdir -p push-assets
+          cp ./_site_blog/feed.xml push-assets/feed.xml
+
+      # ===== 3) (Optional) Token scope check — helpful while debugging =====
+      - name: Check PAT scopes (debug)
+        env:
+          PAT: ${{ secrets.KMW_SYNC_TOKEN }}
+        run: |
+          echo "Token scopes header:"
+          curl -sI -H "Authorization: token ${PAT}" https://api.github.com/user \
+            | tr -d '\r' | grep -i '^x-oauth-scopes' || true
+          echo "Repo permissions snapshot:"
+          curl -s -H "Authorization: token ${PAT}" https://api.github.com/repos/AmexClawBack/KingsMobileWelding \
+            | tr -d '\r' | grep -E '"full_name"|\"private\"|\"permissions\"' || true
+
+      # ===== 4) Push to AmexClawBack/KingsMobileWelding via normal git =====
+      - name: Checkout KingsMobileWelding (target repo)
+        uses: actions/checkout@v4
+        with:
+          repository: AmexClawBack/KingsMobileWelding
+          path: kings
+          token: ${{ secrets.KMW_SYNC_TOKEN }}   # <-- uses your new secret
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Sync blog build into kings/blog and push
+        run: |
+          rsync -a --delete ./_site_blog/ ./kings/blog/
+          cd kings
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add blog
+          if git diff --cached --quiet; then
+            echo "No blog changes to commit."
+          else
+            git commit -m "ci: sync blog from AmexClawBack.github.io"
+            git push origin main
+          fi
+
+      - name: Sync feed.xml into kings/assets and push
+        run: |
+          rsync -a ./push-assets/ ./kings/assets/
+          cd kings
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/feed.xml
+          if git diff --cached --quiet; then
+            echo "No feed changes to commit."
+          else
+            git commit -m "ci: update assets/feed.xml from blog build"
+            git push origin main
+          fi
+
+  # Deploy to GitHub Pages for amexclawback.github.io (unchanged)
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
