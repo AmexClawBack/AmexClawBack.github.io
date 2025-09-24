@@ -76,7 +76,7 @@ jobs:
       # ===== 3) Token sanity check (debug; safe to keep) =====
       - name: Check PAT scopes (debug)
         env:
-          PAT: ${{ secrets.KMW_SYNC_TOKEN }}
+          PAT: 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
         run: |
           set -e
           echo "Fetching token scopes…"
