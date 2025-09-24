@@ -172,11 +172,14 @@ collections:
     sort_by: order
 
 defaults:
+ defaults:
   - scope:
-      path: "" # An empty string here means all files in the project
-      type: posts
+      path: ""
+      type: "posts"
     values:
-      layout: post
+      layout: "post"
+
+   
       comments: true # Enable comments in posts.
       toc: true # Display TOC column in posts.
       # DO NOT modify the following parameter unless you are confident enough
@@ -225,13 +228,7 @@ jekyll-archives:
     tag: /tags/:name/
     category: /categories/:name/
 
-    defaults:
-  - scope:
-      path: ""
-      type: "posts"
-    values:
-      layout: "post"
-
+   
 
 
 
