@@ -22,33 +22,14 @@ seo_description: "Kings Mobile Welding blog — updates, project highlights, wel
 
     <div class="blog-grid" id="postsGrid">
       {% for p in site.posts %}
-        {% assign thumb_path = nil %}
-        {% assign thumb_alt  = p.title %}
-
-        {% if p.image %}
-          {% if p.image.path %}
-            {% assign thumb_path = p.image.path %}
-            {% assign thumb_alt  = p.image.alt | default: p.title %}
-          {% else %}
-            {% assign thumb_path = p.image %}
-          {% endif %}
-        {% elsif p.cover %}
-          {% assign thumb_path = p.cover %}
-        {% elsif p.thumbnail %}
-          {% assign thumb_path = p.thumbnail %}
+        {% assign cover = p.image | default: p.cover | default: p.thumbnail %}
+        {% if cover %}
+          <img src="{{ cover | relative_url }}" alt="" loading="lazy" itemprop="image">
+        {% else %}
+          <img src="/assets/img/og-image.jpg" alt="" loading="lazy" itemprop="image">
         {% endif %}
 
         <article class="post" itemscope itemtype="https://schema.org/BlogPosting" itemprop="blogPost" data-title="{{ p.title | downcase }}">
-          {% if thumb_path %}
-            <a href="{{ p.url | relative_url }}">
-              <img src="{{ thumb_path | relative_url }}" alt="{{ thumb_alt | escape }}" loading="lazy" itemprop="image">
-            </a>
-          {% else %}
-            <a href="{{ p.url | relative_url }}">
-              <img src="/assets/img/og-image.jpg" alt="{{ p.title | escape }}" loading="lazy" itemprop="image">
-            </a>
-          {% endif %}
-
           <div class="body">
             <div class="meta" itemprop="datePublished" content="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%B %d, %Y" }}</div>
             <h2 itemprop="headline"><a href="{{ site.baseurl }}{{ p.url }}" itemprop="url">{{ p.title }}</a></h2>
@@ -99,30 +80,8 @@ seo_description: "Kings Mobile Welding blog — updates, project highlights, wel
   })();
 </script>
 
-<!-- Inline CSS just for blog/index and single post image tweaks -->
+<!-- Inline CSS to resize single post cover images -->
 <style>
-  /* BLOG GRID THUMBNAILS (on /blog/) */
-  .blog-grid .post img {
-    display: block;
-    width: 100%;
-    height: 260px;
-    object-fit: contain;    /* contain entire image, no cropping */
-    background: #f8fafc;
-    border-radius: 10px;
-    padding: 6px;
-    box-sizing: border-box;
-  }
-  .blog-grid .post a,
-  .blog-grid .post {
-    overflow: hidden;
-  }
-  @media (min-width: 768px) {
-    .blog-grid .post img {
-      height: 300px;
-    }
-  }
-
-  /* SINGLE POST COVER IMAGE (on /blog/posts/…) */
   .post-cover {
     max-width: 900px;
     margin: 0 auto 1.75rem;
@@ -130,7 +89,7 @@ seo_description: "Kings Mobile Welding blog — updates, project highlights, wel
   .post-cover img {
     display: block;
     width: 100%;
-    max-width: 800px;
+    max-width: 800px;   /* smaller image size */
     margin: 0 auto;
     height: auto;
     border-radius: 12px;
@@ -140,5 +99,8 @@ seo_description: "Kings Mobile Welding blog — updates, project highlights, wel
     .post-cover img {
       max-width: 95%;
     }
+  }
+</style>
+
   }
 </style>
