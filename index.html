@@ -50,21 +50,21 @@ seo_description: "Kings Mobile Welding blog — updates, project highlights, wel
           {% endif %}
 
           <div class="body">
-            <div class="meta" itemprop="datePublished" content="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%B %d, %Y" }}</div>
-            <h2 itemprop="headline"><a href="{{ site.baseurl }}{{ p.url }}" itemprop="url">{{ p.title }}</a></h2>
+           <div class="meta" itemprop="datePublished" content="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%B %d, %Y" }}</div>
+<h2 itemprop="headline"><a href="{{ site.baseurl }}{{ p.url }}" itemprop="url">{{ p.title }}</a></h2>
 
-            {% if p.excerpt %}
-              <p itemprop="description">{{ p.excerpt | strip_html | truncate: 170 }}</p>
-            {% endif %}
+{% if p.seo_description or p.description or p.summary or p.excerpt %}
+  {% assign summary = p.seo_description | default: p.description | default: p.summary | default: p.excerpt %}
+  <p itemprop="description">{{ summary | strip_html | normalize_whitespace | truncate: 170 }}</p>
+{% endif %}
 
-            {% if p.tags %}
-              <div class="tags kmw-tags" aria-label="Tags">
-                {% for t in p.tags %}
-                  <span class="tag kmw-tag" itemprop="keywords">{{ t }}</span>
-                {% endfor %}
-              </div>
-            {% endif %}
-
+{% if p.tags %}
+  <div class="tags kmw-tags" aria-label="Tags">
+    {% for t in p.tags %}
+      <span class="tag kmw-tag" itemprop="keywords">{{ t }}</span>
+    {% endfor %}
+  </div>
+{% endif %}
             <div class="cta"><a href="{{ site.baseurl }}{{ p.url }}" aria-label="Read more about {{ p.title }}">Read more →</a></div>
           </div>
         </article>
