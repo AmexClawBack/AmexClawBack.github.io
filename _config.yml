@@ -224,3 +224,9 @@ jekyll-archives:
   permalinks:
     tag: /tags/:name/
     category: /categories/:name/
+
+     backend:
+   name: github # or gitlab
+   repo: username/repo
+   branch: main
++  base_url: https://sveltia-cms-auth.dillonk2012.workers.dev
