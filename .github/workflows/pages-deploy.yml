@@ -23,11 +23,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # --- BLOG REPO CHECKOUT (this repo) ---
+      - name: Checkout (blog repo)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false   # IMPORTANT for pushing to external repo with PAT
+          persist-credentials: false  # important when we later push to external repo
 
       - name: Setup Pages
         id: pages
@@ -39,7 +40,7 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
 
-      # ====== 1) Build for GitHub Pages (amexclawback.github.io) ======
+      # ===== 1) Build for GitHub Pages (amexclawback.github.io) =====
       - name: Build site (GitHub Pages)
         env:
           JEKYLL_ENV: "production"
@@ -57,13 +58,13 @@ jobs:
         with:
           path: "_site${{ steps.pages.outputs.base_path }}"
 
-      # ====== 2) Build for KingsMobileWelding /blog ======
+      # ===== 2) Build for KingsMobileWelding under /blog =====
       - name: Build Jekyll for /blog (Kings site)
         run: |
           echo 'url: "https://www.kingsmobilewelding.com"' > _config.kmw.yml
           echo 'baseurl: "/blog"' >> _config.kmw.yml
           echo 'timezone: "America/New_York"' >> _config.kmw.yml
-          # Add --future if you want posts dated later today to appear immediately:
+          # If you want immediate publish for future-dated posts, uncomment --future:
           # bundle exec jekyll build --trace --future --config _config.yml,_config.kmw.yml -d ./_site_blog
           bundle exec jekyll build --trace --config _config.yml,_config.kmw.yml -d ./_site_blog
 
@@ -72,32 +73,45 @@ jobs:
           mkdir -p push-assets
           cp ./_site_blog/feed.xml push-assets/feed.xml
 
-      # ====== 3) Push build into KingsMobileWelding/blog ======
-      - name: Push built blog to KingsMobileWelding/blog
-        uses: peaceiris/actions-gh-pages@v3
+      # ===== 3) Push to AmexClawBack/KingsMobileWelding via normal git =====
+      - name: Checkout KingsMobileWelding (target repo)
+        uses: actions/checkout@v4
         with:
-          personal_token: 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
-          external_repository: AmexClawBack/KingsMobileWelding
-          publish_branch: main
-          publish_dir: ./_site_blog
-          destination_dir: blog
-          keep_files: true
-          user_name: "github-actions[bot]"
-          user_email: "github-actions[bot]@users.noreply.github.com"
+          repository: AmexClawBack/KingsMobileWelding
+          path: kings
+          token: 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 # your secret name with a space
+          fetch-depth: 0
+          persist-credentials: false
 
-      # ====== 4) Push fresh feed.xml into KingsMobileWelding/assets ======
-      - name: Push feed.xml to KingsMobileWelding/assets
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          personal_token: ${{ secrets['KMW Sync Token'] }}
-          external_repository: AmexClawBack/KingsMobileWelding
-          publish_branch: main
-          publish_dir: ./push-assets
-          destination_dir: assets
-          keep_files: true
-          user_name: "github-actions[bot]"
-          user_email: "github-actions[bot]@users.noreply.github.com"
+      - name: Sync blog build into kings/blog and push
+        run: |
+          rsync -a --delete ./_site_blog/ ./kings/blog/
+          cd kings
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add blog
+          if git diff --cached --quiet; then
+            echo "No blog changes to commit."
+          else
+            git commit -m "ci: sync blog from AmexClawBack.github.io"
+            git push origin main
+          fi
 
+      - name: Sync feed.xml into kings/assets and push
+        run: |
+          rsync -a ./push-assets/ ./kings/assets/
+          cd kings
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/feed.xml
+          if git diff --cached --quiet; then
+            echo "No feed changes to commit."
+          else
+            git commit -m "ci: update assets/feed.xml from blog build"
+            git push origin main
+          fi
+
+  # Deploy to GitHub Pages for amexclawback.github.io (unchanged)
   deploy:
     environment:
       name: github-pages
@@ -108,4 +122,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
