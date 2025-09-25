@@ -16,7 +16,7 @@ tags:
   - On-site welding contractor Virginia
   - Structural steel welding and fabrication
 image:
-  path: /assets/uploads/SBDC-Virginia-Logo.png
+  path: /assets/uploads/Virginia-sbdc-logo.png
   alt: Virginias SBDC Logo
 published: true
 ---
