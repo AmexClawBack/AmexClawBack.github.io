@@ -2,7 +2,7 @@
 layout: post
 title: Kings Mobile Welding at Hampton Roads Connect & Contract
 date: 2025-09-24T19:29:00
-description: Kings Mobile Welding will attend the Hampton Roads Connect & Contract 2025 event to showcase AWS D1.1 certified mobile welding & fabrication services
+description: Kings Mobile Welding will attend the Hampton Roads Connect & Contract 2025 event to showcase AWS D1.1 certified mobile welding & fabrication services.
 categories:
   - Events & Networking
   - Welding & Fabrication Services
