@@ -16,7 +16,7 @@ tags:
   - structural steel welding prices
   - Kings Mobile Welding pricing guide
 image:
-  path: /assets/uploads/money-pile.jpg
+  path: /assets/uploads/money-stack.jpg
   alt: Pile of one hundred dollar bills
 published: true
 ---
