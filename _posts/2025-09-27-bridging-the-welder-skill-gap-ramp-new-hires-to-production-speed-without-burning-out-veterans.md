@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 'Bridging the Welder Skill Gap: Ramp New Hires to Production Speed Without Burning Out Veterans'
-date: 2025-09-27T16:26:00
+date: 2025-09-27T21:13:00
 description: 'Ramp new welders fast: close gaps in blueprint reading, fabrication, distortion control and inspection-ready work with focused on-site training.'
 categories:
   - Training & Development
