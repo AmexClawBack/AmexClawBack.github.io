@@ -15,7 +15,9 @@ tags:
   - welding services hampton roads savings
   - low overhead welding company virginia
   - cost effective mobile welding services
-image: null
+image:
+  path: /assets/uploads/money-stacked-savings.jpg
+  alt: hands stacking a coin
 published: true
 ---
 When prospective customers ask, “How can you offer lower rates than your competition?” we welcome the question — because it gives us a chance to explain exactly how we deliver excellent welding services **without overcharging**. Below are the real reasons Kings Mobile Welding can pass savings to you — and why choosing us doesn’t mean cutting corners.
