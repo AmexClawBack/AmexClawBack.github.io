@@ -72,6 +72,4 @@ We’re headquartered in **Newport News, VA**, and regularly serve clients throu
 
 If you need **on-site welding services**, don’t wait for a small problem to become a big, expensive one. Call **Kings Mobile Welding** today at **757-231-6809** or visit our [Contact Page]() to request a quote.
 
-> ✅ **Structural Welding | Facility Maintenance Welding | Custom Fabrication | Emergency Repairs**
-
 👉 [Explore Our Services](https://www.kingsmobilewelding.com/services/) to learn how we can support your next project.
