@@ -16,7 +16,7 @@ tags:
   - mobile welding services
   - Hampton Roads welding
 image:
-  path: assets/uploads/industrial-cranes.jpg
+  path: /assets/uploads/industrial-cranes.jpg
   alt: Cranes on construction sight at dusk
 published: true
 ---
