@@ -16,7 +16,7 @@ tags:
   - on site structural welding
   - sign installation welding
 image:
-  path: assets/uploads/billboard.JPG
+  path: /assets/uploads/billboard.JPG
   alt: Kings Mobile Welding truck in front of billboard sign being installed by large crane.
 published: true
 ---
