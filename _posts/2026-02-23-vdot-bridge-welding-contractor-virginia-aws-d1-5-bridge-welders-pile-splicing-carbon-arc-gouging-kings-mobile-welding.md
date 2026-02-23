@@ -1,6 +1,6 @@
 ---
 layout: post
-title: VDOT Bridge Welding Contractor Virginia | AWS D1.5 Bridge Welders, Pile Splicing & Carbon Arc Gouging | Kings Mobile Welding
+title: DOT Bridge Welding Contractor Virginia | AWS D1.5 Bridge Welders, Pile Splicing & Carbon Arc Gouging | Kings Mobile Welding
 date: 2026-02-23T15:44:00
 description: AWS D1.5 certified VDOT bridge welding contractor serving Hampton Roads, Richmond, and West Point, VA. Experts in pile splice welding, full penetration welds, carbon arc gouging, bridge erection, and structural repairs. Mobile crews available for night work and travel. Call 757-231-6809 or request service online.
 categories:
