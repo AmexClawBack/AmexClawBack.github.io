@@ -102,7 +102,7 @@ We follow strict **WPS (Welding Procedure Specifications)** and inspection proto
 
 ***
 
-## Serving Virginia & North Carolina (Local SEO Boost)
+## Serving Virginia & North Carolina 
 
 We provide mobile bridge welding services throughout:
 
