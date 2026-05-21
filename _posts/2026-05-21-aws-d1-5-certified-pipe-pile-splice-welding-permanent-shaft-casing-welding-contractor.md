@@ -1,7 +1,7 @@
 ---
 layout: post
 title: AWS D1.5 Certified Pipe Pile Splice Welding & Permanent Shaft Casing Welding Contractor
-date: 2026-05-21T14:06:00
+date: 2026-05-21T14:08:00
 description: AWS D1.5 certified welders specializing in pipe pile splice welding and permanent shaft casing splices for bridge, marine, and deep foundation projects throughout Virginia, Maryland, Washington D.C., North Carolina, and South Carolina. Kings Mobile Welding provides AWS-certified bridge welders for long-term and short-term infrastructure projects.
 categories:
   - Bridge Welding
